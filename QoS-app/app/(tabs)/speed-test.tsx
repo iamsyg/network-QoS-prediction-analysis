@@ -7,8 +7,9 @@ import {
   StatusBar,
   Animated,
   Alert,
+  ScrollView,
+  SafeAreaView,
 } from 'react-native';
-// import SpeedGauge from '../components/SpeedGauge';
 import SpeedGauge from '@/components/SpeedGauge';
 
 // Update this with your backend URL
@@ -120,105 +121,114 @@ const SpeedTestScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
       
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Speed Test</Text>
-        <Text style={styles.subtitle}>Measure your network performance</Text>
-      </View>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Speed Test</Text>
+          <Text style={styles.subtitle}>Measure your network performance</Text>
+        </View>
 
-      {/* Speed Gauge */}
-      <View style={styles.gaugeContainer}>
-        <SpeedGauge
-          downloadSpeed={downloadSpeed}
-          uploadSpeed={uploadSpeed}
-          ping={ping}
-          maxSpeed={100}
-          size={280}
-          strokeWidth={25}
-        />
-      </View>
+        {/* Speed Gauge */}
+        <View style={styles.gaugeContainer}>
+          <SpeedGauge
+            downloadSpeed={downloadSpeed}
+            uploadSpeed={uploadSpeed}
+            ping={ping}
+            maxSpeed={100}
+            size={280}
+            strokeWidth={25}
+          />
+        </View>
 
-      {/* Status Indicator */}
-      <View style={styles.statusContainer}>
-        <View style={[styles.statusIndicator, { backgroundColor: getStatusColor() }]} />
-        <Text style={styles.statusText}>{getStatusText()}</Text>
-      </View>
+        {/* Status Indicator */}
+        <View style={styles.statusContainer}>
+          <View style={[styles.statusIndicator, { backgroundColor: getStatusColor() }]} />
+          <Text style={styles.statusText}>{getStatusText()}</Text>
+        </View>
 
-      {/* Progress Bar */}
-      {isTesting && (
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBar}>
-            <Animated.View
-              style={[
-                styles.progressFill,
-                {
-                  width: progress.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: ['0%', '100%'],
-                  }),
-                },
-              ]}
-            />
+        {/* Progress Bar */}
+        {isTesting && (
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBar}>
+              <Animated.View
+                style={[
+                  styles.progressFill,
+                  {
+                    width: progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: ['0%', '100%'],
+                    }),
+                  },
+                ]}
+              />
+            </View>
+          </View>
+        )}
+
+        {/* Test Results */}
+        <View style={styles.resultsContainer}>
+          <View style={styles.resultItem}>
+            <Text style={styles.resultLabel}>Download</Text>
+            <Text style={styles.resultValue}>{downloadSpeed} Mbps</Text>
+          </View>
+          <View style={styles.resultItem}>
+            <Text style={styles.resultLabel}>Upload</Text>
+            <Text style={styles.resultValue}>{uploadSpeed} Mbps</Text>
+          </View>
+          <View style={styles.resultItem}>
+            <Text style={styles.resultLabel}>Ping</Text>
+            <Text style={styles.resultValue}>{ping} ms</Text>
           </View>
         </View>
-      )}
 
-      {/* Test Results */}
-      <View style={styles.resultsContainer}>
-        <View style={styles.resultItem}>
-          <Text style={styles.resultLabel}>Download</Text>
-          <Text style={styles.resultValue}>{downloadSpeed} Mbps</Text>
-        </View>
-        <View style={styles.resultItem}>
-          <Text style={styles.resultLabel}>Upload</Text>
-          <Text style={styles.resultValue}>{uploadSpeed} Mbps</Text>
-        </View>
-        <View style={styles.resultItem}>
-          <Text style={styles.resultLabel}>Ping</Text>
-          <Text style={styles.resultValue}>{ping} ms</Text>
-        </View>
-      </View>
-
-      {/* Control Button */}
-      <View style={styles.controlContainer}>
-        <TouchableOpacity
-          style={[
-            styles.controlButton,
-            { backgroundColor: isTesting ? '#FF6B35' : '#00A8E8' },
-          ]}
-          onPress={isTesting ? stopTest : startTest}
-          disabled={isTesting}
-        >
-          <Text style={styles.controlButtonText}>
-            {isTesting ? currentTest : 'Start Speed Test'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Additional Info */}
-      <View style={styles.infoContainer}>
-        <Text style={styles.infoTitle}>Latest Test Results</Text>
-        <View style={styles.networkInfo}>
-          <View style={styles.networkItem}>
-            <Text style={styles.networkLabel}>Latency</Text>
-            <Text style={styles.networkValue}>{ping} ms</Text>
-          </View>
-          <View style={styles.networkItem}>
-            <Text style={styles.networkLabel}>Jitter</Text>
-            <Text style={styles.networkValue}>{jitter.toFixed(1)} ms</Text>
-          </View>
-          <View style={styles.networkItem}>
-            <Text style={styles.networkLabel}>Status</Text>
-            <Text style={styles.networkValue}>
-              {downloadSpeed > 50 ? 'Excellent' : downloadSpeed > 20 ? 'Good' : downloadSpeed > 0 ? 'Fair' : 'N/A'}
+        {/* Control Button */}
+        <View style={styles.controlContainer}>
+          <TouchableOpacity
+            style={[
+              styles.controlButton,
+              { backgroundColor: isTesting ? '#FF6B35' : '#00A8E8' },
+            ]}
+            onPress={isTesting ? stopTest : startTest}
+            disabled={isTesting}
+          >
+            <Text style={styles.controlButtonText}>
+              {isTesting ? currentTest : 'Start Speed Test'}
             </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Additional Info */}
+        <View style={styles.infoContainer}>
+          <Text style={styles.infoTitle}>Latest Test Results</Text>
+          <View style={styles.networkInfo}>
+            <View style={styles.networkItem}>
+              <Text style={styles.networkLabel}>Latency</Text>
+              <Text style={styles.networkValue}>{ping} ms</Text>
+            </View>
+            <View style={styles.networkItem}>
+              <Text style={styles.networkLabel}>Jitter</Text>
+              <Text style={styles.networkValue}>{jitter.toFixed(1)} ms</Text>
+            </View>
+            <View style={styles.networkItem}>
+              <Text style={styles.networkLabel}>Status</Text>
+              <Text style={styles.networkValue}>
+                {downloadSpeed > 50 ? 'Excellent' : downloadSpeed > 20 ? 'Good' : downloadSpeed > 0 ? 'Fair' : 'N/A'}
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
-    </View>
+
+        {/* Add some bottom padding to ensure content is not hidden behind tab bar */}
+        <View style={styles.bottomPadding} />
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -226,6 +236,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1a1a2e',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 100, // Extra padding to ensure content is scrollable above tab bar
   },
   header: {
     paddingTop: 20,
@@ -236,22 +253,26 @@ const styles = StyleSheet.create({
     fontSize: 32,
     fontWeight: 'bold',
     color: '#ffffff',
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 14,
     color: '#a0a0a0',
     marginTop: 5,
+    textAlign: 'center',
   },
   gaugeContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 20,
+    paddingHorizontal: 20,
   },
   statusContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 10,
+    paddingHorizontal: 20,
   },
   statusIndicator: {
     width: 12,
@@ -287,6 +308,7 @@ const styles = StyleSheet.create({
   },
   resultItem: {
     alignItems: 'center',
+    flex: 1,
   },
   resultLabel: {
     fontSize: 12,
@@ -343,6 +365,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     color: '#ffffff',
+  },
+  bottomPadding: {
+    height: 80, // Additional padding to ensure content is visible above tab bar
   },
 });
 
